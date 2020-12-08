@@ -6,29 +6,38 @@ public class PrintingSystem {
     private final static int STUDENTS_COUNT = 4;
 
     private final static Printer laserPrinter = new LaserPrinter(
-            "LP-0001", 200, 300, 0); //Polymorphism
+            "LP-0001", 10, 10, 0); //Polymorphism
 
-    static Hashtable<String, ThreadGroup> printSysThreadGroups = new Hashtable<String, ThreadGroup>();
+    static Hashtable<String, ThreadGroup> printSysThreadGroups = new Hashtable<>();
     //static Hashtable<String, Thread> printSysThreads = new Hashtable<String, Thread>();
-    static Student students[] = new Student[STUDENTS_COUNT];
+    static Student[] students = new Student[STUDENTS_COUNT];
 
     //TRY TO EXTEND BOTH TECHNICIANS FROM ONE PARENT
     static PaperTechnician paperTechnician = null;
     static TonerTechnician tonerTechnician = null;
 
-
-    //Student student_0 = new Student()
     public static void main(String[] args) {
+
+        //ADD A MENU! TODO
         createInstances();
+
+        students[0].displayDetails();
+        students[1].displayDetails();
+        students[2].displayDetails();
+        students[3].displayDetails();
+
+        System.out.println("Printer Booting ....");
+
         paperTechnician.paperTechThread.start();
         tonerTechnician.tonerTechThread.start();
+
 
         students[0].stuThread.start();
         students[1].stuThread.start();
         students[2].stuThread.start();
         students[3].stuThread.start();
 
-
+        // Setup the graceful exit of the program TODO
         try {
             paperTechnician.paperTechThread.join();
             tonerTechnician.tonerTechThread.join();
@@ -40,8 +49,6 @@ public class PrintingSystem {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-
     }
 
     private static void createInstances() {
@@ -65,6 +72,5 @@ public class PrintingSystem {
                 laserPrinter, "Silva", "TECH-T-001");
 
         System.out.println("Done creating instances...");
-
     }
 }

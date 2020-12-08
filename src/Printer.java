@@ -1,5 +1,5 @@
 public interface Printer {
     // print the "document"
-    public void printDocument( Document document ) ;
+    public boolean printDocument( Document document ) ;
 
 }

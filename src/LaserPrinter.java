@@ -5,6 +5,7 @@ public class LaserPrinter extends Thread implements ServicePrinter {
     private int tonerLevel;
     private int printedDocumentsCount;
 
+    private final int maxPaperLevel = 250;
     private final int refillPaperLevel = 200;
     private final int replaceTonerLevel = 10;
     private final int waitingPeriod = 5000;
@@ -29,15 +30,15 @@ public class LaserPrinter extends Thread implements ServicePrinter {
                 System.err.println("ERROR:- LaserPrinter.replaceTonerCartridge(): " + e);
             }
         }
-        this.tonerLevel += newTonerSize;
-        System.out.println("Printer Toner replaced");
-        System.out.println(toString());
+        this.tonerLevel = newTonerSize;
+        displayMsg("Printer Toner replaced - "+toString());
+
         notifyAll();
     }
 
     @Override
     public synchronized void refillPaper() {
-        while (this.paperLevel > this.refillPaperLevel) {
+        while (this.paperLevel >= this.refillPaperLevel) {
             try {
                 wait(waitingPeriod);
             } catch (InterruptedException e) {
@@ -45,34 +46,37 @@ public class LaserPrinter extends Thread implements ServicePrinter {
             }
         }
         this.paperLevel += newPaperPackSize;
-        System.out.println("Printer Paper refilled...");
-        System.out.println(toString());
+        displayMsg("Printer Paper refilled - "+toString());
 
         notifyAll();
     }
 
     @Override
-    public synchronized void printDocument(Document document) {
+    public synchronized boolean printDocument(Document document) {
+        boolean success = false;
         //Printing the documents
         int paperCount = document.getNumberOfPages();
-        boolean canPrint = paperCount <= paperLevel && paperCount <= tonerLevel;
 
-        while (!canPrint) {
-            try {
-                System.out.println("Insufficient Resources...");
-                wait();
-            } catch (InterruptedException e) {
-                System.err.println("ERROR:- LaserPrinter.printDocument(): " + e);
-            }
+        if (paperCount > paperLevel || paperCount > tonerLevel) {
+            return success;
+        } else {
+            success = true;
+            reducePaperLevel(paperCount);
+            reduceTonerLevel(paperCount);
+            System.out.println("--------------------------------------------------------------------" +
+                    "---------------------------------------------------------------------------");
+            displayMsg("DONE PRINTING; "+document.toString());
+            displayMsg(toString());
+            displayMsg("[Printing Progress: "+(printedDocumentsCount/20.0)*100.0 +"% Done]");
+            System.out.println("--------------------------------------------------------------------" +
+                    "---------------------------------------------------------------------------");
         }
-        reducePaperLevel(paperCount);
-        reduceTonerLevel(paperCount);
-        notifyAll();
+        return success;
     }
 
     @Override
     public synchronized String toString() {
-        return "LaserPrinter Stat [" +
+        return "Printer Stat [" +
                 "printerID: " + printerID +
                 ", paperLevel: " + paperLevel +
                 ", tonerLevel: " + tonerLevel +
@@ -82,11 +86,16 @@ public class LaserPrinter extends Thread implements ServicePrinter {
 
     private synchronized void reducePaperLevel(int paperCount) {
         this.paperLevel -= paperCount;
-        this.printedDocumentsCount +=1;
+        this.printedDocumentsCount += 1;
     }
+
 
     private synchronized void reduceTonerLevel(int paperCount) {
         this.tonerLevel -= paperCount;
+    }
+
+    private synchronized void displayMsg(String message) {
+        System.out.printf("%-18s: %s\n","PRINTER",message);
     }
 
 }

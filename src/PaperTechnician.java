@@ -3,7 +3,6 @@ public class PaperTechnician implements Runnable{
 
     public Thread paperTechThread;
 
-
     private final ThreadGroup paperTechThreadGroup ;
     private final Printer printer ;
     private final String paperTechName ;
@@ -30,15 +29,19 @@ public class PaperTechnician implements Runnable{
     @Override
     public void run() {
         for(int attempt = 0; attempt<maxAttempts; attempt++) {
+            displayMsg("Printer Paper refill checking...");
             ((ServicePrinter)printer).refillPaper();
             try {
                 Thread.sleep((int)(Math.random()*sleepIntensity));
             } catch (InterruptedException e) {
                 System.err.println("ERROR:- PaperTechnician: " + e);
             }
+            displayMsg("Printer Paper refill checked - "+(attempt+1));
         }
+        displayMsg("3 PAPER REFILLING ATTEMPTS COMPLETED!");
+    }
 
-        System.out.println("PaperTechnician:"+paperTechID+"_"+paperTechName+" - "+
-                "3 PAPER REFILLING ATTEMPTS FINISHED!");
+    private synchronized void displayMsg(String message) {
+        System.out.printf("%-18s: %s\n", "PaperTechnician", message);
     }
 }
