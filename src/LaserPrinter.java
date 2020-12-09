@@ -26,12 +26,13 @@ public class LaserPrinter extends Thread implements ServicePrinter {
         while (this.tonerLevel >= this.replaceTonerLevel) {
             try {
                 wait(waitingPeriod);
+                return; // To limit checks (successful + unsuccessful) to three
             } catch (InterruptedException e) {
                 System.err.println("ERROR:- LaserPrinter.replaceTonerCartridge(): " + e);
             }
         }
         this.tonerLevel = newTonerSize;
-        displayMsg("Printer Toner replaced - "+toString());
+        displayMsg("Printer TONER REPLACED - "+toString());
 
         notifyAll();
     }
@@ -41,12 +42,17 @@ public class LaserPrinter extends Thread implements ServicePrinter {
         while (this.paperLevel >= this.refillPaperLevel) {
             try {
                 wait(waitingPeriod);
+                return; // To limit checks (successful + unsuccessful) to three
             } catch (InterruptedException e) {
                 System.err.println("ERROR:- LaserPrinter.refillPaper(): " + e);
             }
         }
         this.paperLevel += newPaperPackSize;
-        displayMsg("Printer Paper refilled - "+toString());
+        System.out.println("====================================================================" +
+                "===========================================================================");
+        displayMsg("Printer PAPER REFILLED - "+toString());
+        System.out.println("====================================================================" +
+                "===========================================================================");
 
         notifyAll();
     }
@@ -63,20 +69,24 @@ public class LaserPrinter extends Thread implements ServicePrinter {
             success = true;
             reducePaperLevel(paperCount);
             reduceTonerLevel(paperCount);
-            System.out.println("--------------------------------------------------------------------" +
-                    "---------------------------------------------------------------------------");
+            System.out.println("====================================================================" +
+                    "===========================================================================");
             displayMsg("DONE PRINTING; "+document.toString());
             displayMsg(toString());
             displayMsg("[Printing Progress: "+(printedDocumentsCount/20.0)*100.0 +"% Done]");
-            System.out.println("--------------------------------------------------------------------" +
-                    "---------------------------------------------------------------------------");
+            System.out.println("====================================================================" +
+                    "===========================================================================");
         }
+//        if(printedDocumentsCount == 20) {
+//            displayMsg("ALL PRINTING JOBS COMPLETED!");
+//            System.exit(0);
+//        }
         return success;
     }
 
     @Override
     public synchronized String toString() {
-        return "Printer Stat [" +
+        return "Printer Stats [" +
                 "printerID: " + printerID +
                 ", paperLevel: " + paperLevel +
                 ", tonerLevel: " + tonerLevel +

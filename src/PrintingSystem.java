@@ -1,12 +1,11 @@
 import java.util.Hashtable;
+import java.util.Scanner;
 
 public class PrintingSystem {
 
-    private final static int THREADS_COUNT = 6;
     private final static int STUDENTS_COUNT = 4;
 
-    private final static Printer laserPrinter = new LaserPrinter(
-            "LP-0001", 10, 10, 0); //Polymorphism
+    private static Printer laserPrinter; //Polymorphism
 
     static Hashtable<String, ThreadGroup> printSysThreadGroups = new Hashtable<>();
     //static Hashtable<String, Thread> printSysThreads = new Hashtable<String, Thread>();
@@ -18,36 +17,55 @@ public class PrintingSystem {
 
     public static void main(String[] args) {
 
-        //ADD A MENU! TODO
+        displayMsg("Starting Printer...");
+        laserPrinter = new LaserPrinter("LP-0001", 10, 10, 0);
+        displayMsg(laserPrinter.toString());
+        //TODO MAIN MENU!
+
+
+        displayMsg("Creating instances...");
         createInstances();
+
+
+        System.out.println("--------------------------------------------------------" +
+                "--------------------------");
+
+        displayMsg("Details of the randomly created DOCUMENTs of the the STUDENTs");
 
         students[0].displayDetails();
         students[1].displayDetails();
         students[2].displayDetails();
         students[3].displayDetails();
 
-        System.out.println("Printer Booting ....");
+        displayMsg("Printer Booting STARTING ALL THREADS....");
+        System.out.println("-----------------------------------------------------------------" +
+                "------------------------------------------------------------------------------");
+        startAllThreads();
 
-        paperTechnician.paperTechThread.start();
-        tonerTechnician.tonerTechThread.start();
+        System.out.println("-----------------------------------------------------------------" +
+                "------------------------------------------------------------------------------");
+        displayMsg("FINAL PRINTERS STATUS - "+laserPrinter.toString());
+        displayMsg("ALL THREADS HAVE TERMINATED, SEE YOU AGAIN!");
+        System.out.println("-----------------------------------------------------------------" +
+                "------------------------------------------------------------------------------");
+
+    }
+
+    private static void menu(){
+        int paperLevelInt = 0;
+        int tonerLevelInt = 0;
+        displayMsg("Press Y to customise printer initial status and press any other to continue with the default status...");
+        displayMsg("Invalid inputs will cause to start the program with initial values...");
+        Scanner scn = new Scanner(System.in);
+        if(scn.nextLine().equals("Y")) {
+            displayMsg("Enter initial paper level: ");
+            String paperLevel = "-";
+            paperLevel = scn.nextLine();
+            if(!scn.nextLine().matches("^(0|[1-9][0-9]{0,9})$")) {
+                return;
+            }
 
 
-        students[0].stuThread.start();
-        students[1].stuThread.start();
-        students[2].stuThread.start();
-        students[3].stuThread.start();
-
-        // Setup the graceful exit of the program TODO
-        try {
-            paperTechnician.paperTechThread.join();
-            tonerTechnician.tonerTechThread.join();
-            students[0].stuThread.join();
-            students[1].stuThread.join();
-            students[2].stuThread.join();
-            students[3].stuThread.join();
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 
@@ -71,6 +89,34 @@ public class PrintingSystem {
         tonerTechnician = new TonerTechnician(printSysThreadGroups.get("technicians"),
                 laserPrinter, "Silva", "TECH-T-001");
 
-        System.out.println("Done creating instances...");
+        displayMsg("Done creating instances...");
+    }
+
+    private static void startAllThreads() {
+        paperTechnician.paperTechThread.start();
+        tonerTechnician.tonerTechThread.start();
+
+
+        students[0].stuThread.start();
+        students[1].stuThread.start();
+        students[2].stuThread.start();
+        students[3].stuThread.start();
+
+        try {
+            paperTechnician.paperTechThread.join();
+            tonerTechnician.tonerTechThread.join();
+            students[0].stuThread.join();
+            students[1].stuThread.join();
+            students[2].stuThread.join();
+            students[3].stuThread.join();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private static synchronized void displayMsg(String message) {
+        System.out.printf("%-18s: %s\n","MAIN_PROGRAM",message);
     }
 }

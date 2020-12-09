@@ -10,7 +10,7 @@ public class PaperTechnician implements Runnable{
 
     private final int maxAttempts = 3;
 
-    private int sleepIntensity = 10000;
+    private int sleepIntensity = 1000;
 
     public PaperTechnician(ThreadGroup paperTechThreadGroup, Printer printer, String paperTechName, String paperTechID) {
         this.paperTechThreadGroup = paperTechThreadGroup;
@@ -38,7 +38,7 @@ public class PaperTechnician implements Runnable{
             }
             displayMsg("Printer Paper refill checked - "+(attempt+1));
         }
-        displayMsg("3 PAPER REFILLING ATTEMPTS COMPLETED!");
+        displayMsg("3 PAPER REFILLINGS ATTEMPTS DONE!");
     }
 
     private synchronized void displayMsg(String message) {

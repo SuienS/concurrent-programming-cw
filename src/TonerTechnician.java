@@ -10,7 +10,7 @@ public class TonerTechnician implements Runnable{
 
     private final int maxAttempts = 3; // toner attempts max TODO
 
-    private int sleepIntensity = 10000;
+    private int sleepIntensity = 1000;
 
 
     public TonerTechnician(ThreadGroup tonerTechThreadGroup, Printer printer, String tonerTechName, String tonerTechID) {
@@ -40,7 +40,8 @@ public class TonerTechnician implements Runnable{
             }
             displayMsg("Printer Toner checked - "+(attempt+1));
         }
-        displayMsg("3 TONER REPLACEMENT ATTEMPTS FINISHED!");
+        displayMsg("3 TONER REPLACEMENTS ATTEMPTS DONE!");
+
     }
 
     private synchronized void displayMsg(String message) {
