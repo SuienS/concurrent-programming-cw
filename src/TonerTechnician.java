@@ -40,7 +40,7 @@ public class TonerTechnician implements Runnable{
             }
             displayMsg("Printer Toner checked - "+(attempt+1));
         }
-        displayMsg("3 TONER REPLACEMENTS ATTEMPTS DONE!");
+        displayMsg("3 TONER REPLACEMENT ATTEMPTS DONE!");
 
     }
 

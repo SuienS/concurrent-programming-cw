@@ -73,10 +73,6 @@ public class Student implements Runnable {
                 System.err.println("ERROR:- Student: " + e);
             }
 
-            if(docIndex >= documentCount) {
-                docIndex = 0;
-            }
-
             int checkDocIndex = docIndex;
             if(IntStream.of(printedIndex).anyMatch(i -> i == checkDocIndex)) {
                 docIndex++;
@@ -91,7 +87,7 @@ public class Student implements Runnable {
                 curPrintingIndex++;
             }
 
-            docIndex++;
+            docIndex = (docIndex+1) % documentCount;
         }
         displayMsg("MY PRINTING JOBS ARE DONE!");
     }

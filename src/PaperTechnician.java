@@ -38,7 +38,7 @@ public class PaperTechnician implements Runnable{
             }
             displayMsg("Printer Paper refill checked - "+(attempt+1));
         }
-        displayMsg("3 PAPER REFILLINGS ATTEMPTS DONE!");
+        displayMsg("3 PAPER REFILL ATTEMPTS DONE!");
     }
 
     private synchronized void displayMsg(String message) {

@@ -105,7 +105,7 @@ public class LaserPrinter extends Thread implements ServicePrinter {
     }
 
     private synchronized void displayMsg(String message) {
-        System.out.printf("%-18s: %s\n","PRINTER",message);
+        System.out.printf("%-18s: %s\n","PRINTER ("+printerID+")",message);
     }
 
 }

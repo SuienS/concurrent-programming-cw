@@ -20,6 +20,7 @@ public class PrintingSystem {
         displayMsg("Starting Printer...");
         laserPrinter = new LaserPrinter("LP-0001", 10, 10, 0);
         displayMsg(laserPrinter.toString());
+        menu();
         //TODO MAIN MENU!
 
 
@@ -37,7 +38,7 @@ public class PrintingSystem {
         students[2].displayDetails();
         students[3].displayDetails();
 
-        displayMsg("Printer Booting STARTING ALL THREADS....");
+        displayMsg("Printer... Booting STARTING ALL THREADS....");
         System.out.println("-----------------------------------------------------------------" +
                 "------------------------------------------------------------------------------");
         startAllThreads();
@@ -55,17 +56,33 @@ public class PrintingSystem {
         int paperLevelInt = 0;
         int tonerLevelInt = 0;
         displayMsg("Press Y to customise printer initial status and press any other to continue with the default status...");
-        displayMsg("Invalid inputs will cause to start the program with initial values...");
+        displayMsg("Invalid inputs will cause to start the program with default values...");
         Scanner scn = new Scanner(System.in);
-        if(scn.nextLine().equals("Y")) {
+        if(scn.nextLine().toUpperCase().equals("Y")) {
             displayMsg("Enter initial paper level: ");
             String paperLevel = "-";
             paperLevel = scn.nextLine();
-            if(!scn.nextLine().matches("^(0|[1-9][0-9]{0,9})$")) {
+            if(!paperLevel.matches("^(0|[1-9][0-9]{0,9})$")) {
+                displayMsg("Continuing with default values...");
                 return;
             }
+            paperLevelInt = Integer.parseInt(paperLevel);
 
+            displayMsg("Enter initial toner level: ");
+            String tonerLevel = "-";
+            tonerLevel = scn.nextLine();
+            if(!tonerLevel.matches("^(0|[1-9][0-9]{0,9})$")) {
+                displayMsg("Continuing with default values...");
+                return;
+            }
+            tonerLevelInt = Integer.parseInt(tonerLevel);
 
+            laserPrinter = new LaserPrinter("LP-0001", paperLevelInt, tonerLevelInt, 0);
+
+            displayMsg("Custom Settings successfully loaded");
+            displayMsg(laserPrinter.toString());
+        }else{
+            displayMsg("Continuing with default values...");
         }
     }
 
