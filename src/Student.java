@@ -21,12 +21,12 @@ public class Student implements Runnable {
     private final String studentName;
     private final String studentID;
 
-    private final int documentCount = 5;  // Total documents count in a single student
+    public static int documentCount = 5;  // Total documents count in a single student
 
     private int[] printedIndex = new int[documentCount]; // Collects the indices of the printed documents
 
     // This is limited to 10 as the minimum replaceable toner value is 10 (as per CW specification)
-    private int docMaxLength = 10; // Maximum document length
+    public static int docMaxLength = 10; // Maximum document length
 
     private int sleepIntensity = 3000; // Represents the maximum duration of the random sleep period
 

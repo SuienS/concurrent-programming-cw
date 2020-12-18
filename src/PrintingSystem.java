@@ -29,29 +29,22 @@ public class PrintingSystem {
         displayMsg("Starting Printer...");
         laserPrinter = new LaserPrinter("LP-0001", 50, 50, 0);
         displayMsg(laserPrinter.toString());
-        menu(); // Settings menu
+        menu(); // Simulation start menu
 
         displayMsg("Creating instances...");
         createInstances(); // Creating instances of Students and Technicians
 
-        System.out.println("--------------------------------------------------------" +
-                "--------------------------");
-
         displayMsg("Details of the randomly created DOCUMENTs of the the STUDENTs");
-        displayStudentDetails();
+        displayStudentDetails(); // Displaying the details of the automatically created document
 
         displayMsg("Printer... Booting STARTING ALL THREADS....");
-        System.out.println("-----------------------------------------------------------------" +
-                "------------------------------------------------------------------------------");
-        startAllThreads();
 
-        System.out.println("-----------------------------------------------------------------" +
-                "------------------------------------------------------------------------------");
+        startAllThreads(); // Starting the created threads
+
         displayMsg("FINAL PRINTERS STATUS - "+laserPrinter.toString());
         displayMsg("ALL THREADS HAVE TERMINATED, SEE YOU AGAIN!");
-        System.out.println("-----------------------------------------------------------------" +
-                "------------------------------------------------------------------------------");
-
+        System.out.println("---------------------------------------------------------------------" +
+                "//------------------------------------------------------------------------");
     }
 
     private static void menu(){
@@ -60,12 +53,14 @@ public class PrintingSystem {
         int stuCountInt = 0;
         displayMsg("Press Y to customise system initial status and press any other to continue with the default status...");
         displayMsg("Invalid inputs will cause to start the program with default values...");
+
+        // Input prompts
         Scanner scn = new Scanner(System.in);
         if(scn.nextLine().toUpperCase().equals("Y")) {
             displayMsg("Enter initial paper level (max 250): ");
             String paperLevel = "-";
             paperLevel = scn.nextLine();
-            if(!paperLevel.matches("^(0|[1-9][0-9]{0,9})$")) {
+            if(!paperLevel.matches("^(0|[1-9][0-9]{0,9})$")) { // Input validation
                 displayMsg("Continuing with default values...");
                 return;
             }
@@ -74,12 +69,13 @@ public class PrintingSystem {
             displayMsg("Enter initial toner level (max 500): ");
             String tonerLevel = "-";
             tonerLevel = scn.nextLine();
-            if(!tonerLevel.matches("^(0|[1-9][0-9]{0,9})$")) {
+            if(!tonerLevel.matches("^(0|[1-9][0-9]{0,9})$")) { // Input validation
                 displayMsg("Continuing with default values...");
                 return;
             }
             tonerLevelInt = Integer.parseInt(tonerLevel);
 
+            // Input quantity validation
             if(paperLevelInt>ServicePrinter.Full_Paper_Tray || tonerLevelInt>ServicePrinter.Full_Toner_Level){
                 displayMsg("Continuing with default values...");
                 return;
@@ -93,10 +89,13 @@ public class PrintingSystem {
                 return;
             }
             stuCountInt = Integer.parseInt(stuCount);
+
+            // Overcoming a potential deadlock
             // Checking whether the resources would be sufficient for the provided settings
+            int totDocs = stuCountInt*Student.documentCount*Student.docMaxLength;
             boolean deadLock =
-                    ((stuCountInt*5*10) > (paperLevelInt + ( ServicePrinter.SheetsPerPack * PaperTechnician.maxAttempts)))
-                            || ((stuCountInt*5*10) > (tonerLevelInt + ( ServicePrinter.Full_Toner_Level * TonerTechnician.maxAttempts)));
+                    ((totDocs) > (paperLevelInt + ( ServicePrinter.SheetsPerPack * PaperTechnician.maxAttempts)))
+                            || ((totDocs) > (tonerLevelInt + ( ServicePrinter.Full_Toner_Level * TonerTechnician.maxAttempts)));
             if(deadLock) {
                 displayMsg("Entered student count may cause the program to go into a DEADLOCK!");
                 displayMsg("Continuing with default values...");
@@ -112,29 +111,42 @@ public class PrintingSystem {
         }
     }
 
+    // Method for creating necessary Instances
     private static void createInstances() {
+        displayMsg("Creating instances...");
         students = new Student[STUDENTS_COUNT];
+        displayMsg("Creating ThreadGroups...");
+
+        // adding 'main' thread to the ThreadGroup
         printSysThreadGroups.put("main_thread", Thread.currentThread().getThreadGroup());
+        // Student ThreadGroup
         printSysThreadGroups.put("students",
                 new ThreadGroup(printSysThreadGroups.get("main_thread"), "ThreadGroup: Students")
         );
+        // Technicians ThreadGroup
         printSysThreadGroups.put("technicians",
                 new ThreadGroup(printSysThreadGroups.get("main_thread"), "ThreadGroup: Technicians")
         );
 
+        displayMsg("Creating Student instances...");
         for (int stuIndex = 0; stuIndex < STUDENTS_COUNT; stuIndex++) {
             students[stuIndex] = new Student(laserPrinter, "Student_" + stuIndex,
                     "STU-00000" + stuIndex);
         }
 
+        displayMsg("Creating Technician instances...");
         paperTechnician = new PaperTechnician(laserPrinter, "Ravidu", "TECH-P-001");
-
         tonerTechnician = new TonerTechnician(laserPrinter, "Silva", "TECH-T-001");
 
         displayMsg("Done creating instances...");
+        System.out.println("--------------------------------------------------------" +
+                "--------------------------");
     }
 
+    // Method for iteratively start all the necessary Threads
     private static void startAllThreads() {
+        System.out.println("-----------------------------------------------------------------" +
+                "------------------------------------------------------------------------------");
         paperTechnician.paperTechThread.start();
         tonerTechnician.tonerTechThread.start();
 
@@ -153,15 +165,18 @@ public class PrintingSystem {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
+        System.out.println("-----------------------------------------------------------------" +
+                "------------------------------------------------------------------------------");
     }
 
+    // Method for displaying all the generated students and their details
     private static void displayStudentDetails() {
         for (Student student : students) {
             student.displayDetails();
         }
     }
 
+    // Console message display method for PrintingSystem main class
     private static synchronized void displayMsg(String message) {
         System.out.printf("%-18s: %s\n","MAIN_PROGRAM",message);
     }

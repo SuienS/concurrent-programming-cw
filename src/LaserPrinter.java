@@ -32,7 +32,7 @@ public class LaserPrinter extends Thread implements ServicePrinter {
         this.paperLevel = paperLevel;
         this.tonerLevel = tonerLevel;
         this.printedDocumentsCount = printedDocumentsCount;
-        this.totalDocs = PrintingSystem.STUDENTS_COUNT * 5;
+        this.totalDocs = PrintingSystem.STUDENTS_COUNT * Student.documentCount;
         progressBar = new char[this.totalDocs];
         Arrays.fill(progressBar, ' ');
     }
