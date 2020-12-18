@@ -1,46 +1,56 @@
+/*======================================================================================
+ * File     : PaperTechnician.java  (Class)
+ * Author   : Rammuni Ravidu Suien Silva
+ * IIT No   : 2016134
+ * UoW No   : 16267097
+ * Contents : 6SENG002W / 6SENG004C CWK
+ *            This Runnable class represents the Paper Technician of the system
+ * Date     : 04/01/2021
+ ======================================================================================*/
+
 public class PaperTechnician implements Runnable{
-//TRY TO EXTEND BOTH TECHNICIANS FROM ONE PARENT
 
-    public Thread paperTechThread;
+    public Thread paperTechThread; // Thread of the class
 
-    private final ThreadGroup paperTechThreadGroup ;
-    private final Printer printer ;
+    private final Printer printer ; // Polymorphism is used
+
+    // Identification information of the PaperTechnician
     private final String paperTechName ;
     private final String paperTechID ;
 
-    private final int maxAttempts = 3;
+    public static final int maxAttempts = 3; // Maximum attempts of refilling the paper tray (As per CW spec.)
 
-    private int sleepIntensity = 1000;
+    private int sleepIntensity = 3000; // Represents the maximum duration of the random sleep period
 
-    public PaperTechnician(ThreadGroup paperTechThreadGroup, Printer printer, String paperTechName, String paperTechID) {
-        this.paperTechThreadGroup = paperTechThreadGroup;
+    // Only constructor
+    public PaperTechnician(Printer printer, String paperTechName, String paperTechID) {
         this.printer = printer;
         this.paperTechName = paperTechName;
         this.paperTechID = paperTechID;
 
-        PrintingSystem.printSysThreadGroups.put("technicianThreadGroup", new ThreadGroup(
-                PrintingSystem.printSysThreadGroups.get("main_thread"),"technician"));
-
+        // Creating the thread instance and placing it in the thread group
         paperTechThread = new Thread(
-                PrintingSystem.printSysThreadGroups.get("technicianThreadGroup"),this);
-
+                PrintingSystem.printSysThreadGroups.get("technicians"),this);
     }
 
     @Override
     public void run() {
+
+        // Limiting refilling attempts to three
         for(int attempt = 0; attempt<maxAttempts; attempt++) {
             displayMsg("Printer Paper refill checking...");
             ((ServicePrinter)printer).refillPaper();
             try {
-                Thread.sleep((int)(Math.random()*sleepIntensity));
+                Thread.sleep((int)(Math.random()*sleepIntensity)); // Random sleeps
             } catch (InterruptedException e) {
                 System.err.println("ERROR:- PaperTechnician: " + e);
             }
             displayMsg("Printer Paper refill checked - "+(attempt+1));
         }
-        displayMsg("3 PAPER REFILL ATTEMPTS DONE!");
+        displayMsg("3 PAPER REFILL ATTEMPTS COMPLETED!");
     }
 
+    // Console message display method for PaperTechnician
     private synchronized void displayMsg(String message) {
         System.out.printf("%-18s: %s\n", "PaperTechnician", message);
     }

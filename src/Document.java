@@ -1,13 +1,12 @@
-/** *********************************************************************
- * File:      Document.java  (Class)
- * Author:    Rammuni Ravidu Suien Silva
- * Contents:  6SENG002W CWK
+/*========================================================================
+ * File     : Document.java  (Class)
+ * Author   : Rammuni Ravidu Suien Silva
+ * Contents : 6SENG002W / 6SENG004C CWK
  *            This provides an "abstract" document object.
  *            It includes the user id, the document's name & its length
  *            in pages.
- * Date:      xxxx/12/20
- * Version:   1.0 xxxxx
- ************************************************************************ */
+ * Date     : 04/01/2021
+ ========================================================================*/
 
 public class Document {
     private final String userID ;

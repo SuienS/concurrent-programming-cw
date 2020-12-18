@@ -1,40 +1,55 @@
+/*======================================================================================
+ * File     : Student.java  (Runnable Class)
+ * Author   : Rammuni Ravidu Suien Silva
+ * IIT No   : 2016134
+ * UoW No   : 16267097
+ * Contents : 6SENG002W / 6SENG004C CWK
+ *            This Runnable class represents a Student of the system who has Documents to print
+ * Date     : 04/01/2021
+ ======================================================================================*/
+
 import java.util.Arrays;
-import java.util.stream.IntStream;  //IntStream in JAVA 8 was used
+import java.util.stream.IntStream;  // 'IntStream' in JAVA 8 was used
 
 public class Student implements Runnable {
 
-    public Thread stuThread;
+    public Thread stuThread; // Thread of the student
 
-    private final ThreadGroup studentThreadGroup;
-    private final Printer printer;
+    private final Printer printer; // Printer object
+
+    // Student details
     private final String studentName;
     private final String studentID;
 
-    private final int documentCount = 5;
-    private int[] printedIndex = new int[documentCount];
+    private final int documentCount = 5;  // Total documents count in a single student
 
-    private int sleepIntensity = 500;
-    private int docMaxLength = 10; // This is limited to 10 as the minimum replaceable toner value is 10
+    private int[] printedIndex = new int[documentCount]; // Collects the indices of the printed documents
+
+    // This is limited to 10 as the minimum replaceable toner value is 10 (as per CW specification)
+    private int docMaxLength = 10; // Maximum document length
+
+    private int sleepIntensity = 3000; // Represents the maximum duration of the random sleep period
 
 
+    // Array holding the documents
     private Document[] printingDocuments = new Document[documentCount];
 
-    public Student(ThreadGroup studentThreadGroup, Printer printer, String studentName, String studentID) {
-        this.studentThreadGroup = studentThreadGroup;
+    // Only constructor
+    public Student(Printer printer, String studentName, String studentID) {
         this.printer = printer;
         this.studentName = studentName;
         this.studentID = studentID;
-        Arrays.fill(printedIndex, -1);
-        createDocuments();
 
-        PrintingSystem.printSysThreadGroups.put("studentThreadGroup", new ThreadGroup(
-                PrintingSystem.printSysThreadGroups.get("main_thread"),"students"));
+        Arrays.fill(printedIndex, -1); // Fills the printed indices array with -1
+        createDocuments(); // Creating documents objects with valid random information
 
+        // Creating the thread instance and placing it in the thread group
         stuThread = new Thread(
-                PrintingSystem.printSysThreadGroups.get("studentThreadGroup"),this);
+                PrintingSystem.printSysThreadGroups.get("students"),this);
 
     }
 
+    // Method for creating documents objects with valid random information
     private synchronized void createDocuments() {
         for (int docIndex = 0; docIndex < documentCount; docIndex++) {
             String docName = "stuID-" + studentID + "-doc-" + docIndex;
@@ -43,6 +58,7 @@ public class Student implements Runnable {
         }
     }
 
+    // Displays information of the student and the belonging documents
     public synchronized void displayDetails() {
         System.out.println("==================================================================================");
         System.out.println("                            STUDENT ID: "+studentID);
@@ -59,39 +75,41 @@ public class Student implements Runnable {
 
     @Override
     public void run() {
-        int docIndex = 0;
-        int curPrintingIndex = 0;
+        int docIndex = 0; // Index of the printingDocument array
+        int curPrintingIndex = 0; // Index of the printedIndex array
 
-        //IntStream in JAVA 8 was used
+        // 'IntStream' in JAVA 8 was used
+        // Iterate through the documents array until all the documents get printed
         while (IntStream.of(printedIndex).anyMatch(i -> i == -1)) {
 
             try {
-                //System.out.print("."); //loading cli animation java TODO
-                Thread.sleep((int) (Math.random() * sleepIntensity));
-
+                Thread.sleep((int) (Math.random() * sleepIntensity)); // Random sleeps
             } catch (InterruptedException e) {
                 System.err.println("ERROR:- Student: " + e);
             }
 
             int checkDocIndex = docIndex;
+            // Check whether the document has already been printed
             if(IntStream.of(printedIndex).anyMatch(i -> i == checkDocIndex)) {
-                docIndex++;
+                docIndex = (docIndex+1) % documentCount;
                 continue;
             }
 
-            //displayMsg("PRINTING - "+printingDocuments[docIndex].toString());
+            // Setting the success boolean flag
             boolean success = printer.printDocument(printingDocuments[docIndex]);
 
+            // Adding the index to the printed index only if the document is successfully printed
             if(success) {
                 printedIndex[curPrintingIndex] = docIndex;
                 curPrintingIndex++;
             }
 
-            docIndex = (docIndex+1) % documentCount;
+            docIndex = (docIndex+1) % documentCount; // Mod operator used to overcome any NullPointerException errors
         }
         displayMsg("MY PRINTING JOBS ARE DONE!");
     }
 
+    // Console message display method for Student
     private synchronized void displayMsg(String message) {
         System.out.printf("%-18s: %s\n", studentID, message);
     }
