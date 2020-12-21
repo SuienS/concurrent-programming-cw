@@ -25,8 +25,9 @@ public class Student implements Runnable {
 
     private int[] printedIndex = new int[documentCount]; // Collects the indices of the printed documents
 
-    // This is limited to 10 as the minimum replaceable toner value is 10 (as per CW specification)
-    public static int docMaxLength = 10; // Maximum document length
+    // This is limited as the refilling paper attempts and replacing toner attempts are limited to 3
+    // (as per CW specification)
+    public static int docMaxLength = 20; // Maximum document length
 
     private int sleepIntensity = 3000; // Represents the maximum duration of the random sleep period
 

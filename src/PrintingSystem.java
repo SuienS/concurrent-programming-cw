@@ -27,7 +27,7 @@ public class PrintingSystem {
     public static void main(String[] args) {
 
         displayMsg("Starting Printer...");
-        laserPrinter = new LaserPrinter("LP-0001", 50, 50, 0);
+        laserPrinter = new LaserPrinter("LP-0001", 250, 50, 0);
         displayMsg(laserPrinter.toString());
         menu(); // Simulation start menu
 
@@ -41,7 +41,7 @@ public class PrintingSystem {
 
         startAllThreads(); // Starting the created threads
 
-        displayMsg("FINAL PRINTERS STATUS - "+laserPrinter.toString());
+        displayMsg("FINAL PRINTER STATUS - "+laserPrinter.toString());
         displayMsg("ALL THREADS HAVE TERMINATED, SEE YOU AGAIN!");
         System.out.println("---------------------------------------------------------------------" +
                 "//------------------------------------------------------------------------");
@@ -51,12 +51,19 @@ public class PrintingSystem {
         int paperLevelInt = 0;
         int tonerLevelInt = 0;
         int stuCountInt = 0;
+        int pageCountInt = 0;
         displayMsg("Press Y to customise system initial status and press any other to continue with the default status...");
         displayMsg("Invalid inputs will cause to start the program with default values...");
 
         // Input prompts
         Scanner scn = new Scanner(System.in);
         if(scn.nextLine().toUpperCase().equals("Y")) {
+            System.out.println("====================================================================" +
+                    "===========================================================================");
+            displayMsg("                                  Settings Menu for Shared Printer Simulation");
+            System.out.println("====================================================================" +
+                    "===========================================================================");
+
             displayMsg("Enter initial paper level (max 250): ");
             String paperLevel = "-";
             paperLevel = scn.nextLine();
@@ -81,6 +88,17 @@ public class PrintingSystem {
                 return;
             }
 
+            // Setting maximum pages per automatically generated document
+            displayMsg("Enter maximum document page count per document you want to simulate: ");
+            String pageCount = "-";
+            pageCount = scn.nextLine();
+            if(!pageCount.matches("^(0|[1-9][0-9]{0,9})$")) {
+                displayMsg("Continuing with default values...");
+                return;
+            }
+            pageCountInt = Integer.parseInt(pageCount);
+            Student.docMaxLength = pageCountInt;
+
             displayMsg("Enter number of Students you want to simulate: ");
             String stuCount = "-";
             stuCount = scn.nextLine();
@@ -97,7 +115,7 @@ public class PrintingSystem {
                     ((totDocs) > (paperLevelInt + ( ServicePrinter.SheetsPerPack * PaperTechnician.maxAttempts)))
                             || ((totDocs) > (tonerLevelInt + ( ServicePrinter.Full_Toner_Level * TonerTechnician.maxAttempts)));
             if(deadLock) {
-                displayMsg("Entered student count may cause the program to go into a DEADLOCK!");
+                displayMsg("Entered student count with max document page count may cause the program to go into a DEADLOCK!");
                 displayMsg("Continuing with default values...");
                 return;
             }
