@@ -97,7 +97,6 @@ public class PrintingSystem {
                 return;
             }
             pageCountInt = Integer.parseInt(pageCount);
-            Student.docMaxLength = pageCountInt;
 
             displayMsg("Enter number of Students you want to simulate: ");
             String stuCount = "-";
@@ -119,6 +118,7 @@ public class PrintingSystem {
                 displayMsg("Continuing with default values...");
                 return;
             }
+            Student.docMaxLength = pageCountInt;
             STUDENTS_COUNT = stuCountInt;
             laserPrinter = new LaserPrinter("LP-0001", paperLevelInt, tonerLevelInt, 0);
 
