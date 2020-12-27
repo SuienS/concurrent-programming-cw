@@ -10,7 +10,7 @@
 
 public class TonerTechnician implements Runnable{
 
-    public Thread tonerTechThread; // Thread of the class
+    private Thread tonerTechThread; // Thread of the class
 
     private final Printer printer ; // Polymorphism is used
 
@@ -18,7 +18,7 @@ public class TonerTechnician implements Runnable{
     private final String tonerTechName ;
     private final String tonerTechID ;
 
-    public static final int maxAttempts = 3; // Maximum attempts of replacing the toner (As per CW spec.)
+    private static final int maxAttempts = 3; // Maximum attempts of replacing the toner (As per CW spec.)
 
     private int sleepIntensity = 3000; // Represents the maximum duration of the random sleep period
 
@@ -30,7 +30,7 @@ public class TonerTechnician implements Runnable{
 
         // Creating the thread instance and placing it in the thread group
         tonerTechThread = new Thread(
-                PrintingSystem.printSysThreadGroups.get("technicians"),this);
+                PrintingSystem.getPrintSysThreadGroups().get("technicians"),this);
     }
 
     @Override
@@ -53,5 +53,14 @@ public class TonerTechnician implements Runnable{
     // Console message display method for TonerTechnician
     private synchronized void displayMsg(String message) {
         System.out.printf("%-18s: %s\n", "TonerTechnician", message);
+    }
+
+    // Getters
+    public Thread getTonerTechThread() {
+        return tonerTechThread;
+    }
+
+    public static int getMaxAttempts() {
+        return maxAttempts;
     }
 }

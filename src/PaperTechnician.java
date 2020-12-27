@@ -10,7 +10,7 @@
 
 public class PaperTechnician implements Runnable{
 
-    public Thread paperTechThread; // Thread of the class
+    private Thread paperTechThread; // Thread of the class
 
     private final Printer printer ; // Polymorphism is used
 
@@ -18,7 +18,7 @@ public class PaperTechnician implements Runnable{
     private final String paperTechName ;
     private final String paperTechID ;
 
-    public static final int maxAttempts = 3; // Maximum attempts of refilling the paper tray (As per CW spec.)
+    private static final int maxAttempts = 3; // Maximum attempts of refilling the paper tray (As per CW spec.)
 
     private int sleepIntensity = 3000; // Represents the maximum duration of the random sleep period
 
@@ -30,7 +30,7 @@ public class PaperTechnician implements Runnable{
 
         // Creating the thread instance and placing it in the thread group
         paperTechThread = new Thread(
-                PrintingSystem.printSysThreadGroups.get("technicians"),this);
+                PrintingSystem.getPrintSysThreadGroups().get("technicians"),this);
     }
 
     @Override
@@ -53,5 +53,14 @@ public class PaperTechnician implements Runnable{
     // Console message display method for PaperTechnician
     private synchronized void displayMsg(String message) {
         System.out.printf("%-18s: %s\n", "PaperTechnician", message);
+    }
+
+    // Getters
+    public Thread getPaperTechThread() {
+        return paperTechThread;
+    }
+
+    public static int getMaxAttempts() {
+        return maxAttempts;
     }
 }

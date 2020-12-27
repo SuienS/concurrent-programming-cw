@@ -5,6 +5,7 @@
  * UoW No   : 16267097
  * Contents : 6SENG002W / 6SENG004C CWK
  *            This Thread class represents the actual printer in the system
+ *            (A Monitor)
  * Date     : 04/01/2021
  ===========================================================================*/
 
@@ -22,7 +23,7 @@ public class LaserPrinter extends Thread implements ServicePrinter {
     private final int waitingPeriod = 5000; // Waiting period (in ms) after each replacing or refilling attempt
 
     // Variables for the progress bar illustration
-    char[] progressBar;
+    private char[] progressBar;
     private int pbPointer = 0;
 
 
@@ -32,7 +33,7 @@ public class LaserPrinter extends Thread implements ServicePrinter {
         this.paperLevel = paperLevel;
         this.tonerLevel = tonerLevel;
         this.printedDocumentsCount = printedDocumentsCount;
-        this.totalDocs = PrintingSystem.STUDENTS_COUNT * Student.documentCount;
+        this.totalDocs = PrintingSystem.getStudentsCount() * Student.getDocumentCount();
         progressBar = new char[this.totalDocs];
         Arrays.fill(progressBar, ' ');
     }

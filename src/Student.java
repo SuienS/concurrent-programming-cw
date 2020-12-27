@@ -13,7 +13,7 @@ import java.util.stream.IntStream;  // 'IntStream' in JAVA 8 was used
 
 public class Student implements Runnable {
 
-    public Thread stuThread; // Thread of the student
+    private Thread stuThread; // Thread of the student
 
     private final Printer printer; // Printer object
 
@@ -21,13 +21,13 @@ public class Student implements Runnable {
     private final String studentName;
     private final String studentID;
 
-    public static int documentCount = 5;  // Total documents count in a single student
+    private static int documentCount = 5;  // Total documents count in a single student
 
     private int[] printedIndex = new int[documentCount]; // Collects the indices of the printed documents
 
     // This is limited as the refilling paper attempts and replacing toner attempts are limited to 3
     // (as per CW specification)
-    public static int docMaxLength = 20; // Maximum document length
+    private static int docMaxLength = 20; // Maximum document length
 
     private int sleepIntensity = 3000; // Represents the maximum duration of the random sleep period
 
@@ -46,7 +46,7 @@ public class Student implements Runnable {
 
         // Creating the thread instance and placing it in the thread group
         stuThread = new Thread(
-                PrintingSystem.printSysThreadGroups.get("students"),this);
+                PrintingSystem.getPrintSysThreadGroups().get("students"),this);
 
     }
 
@@ -113,5 +113,24 @@ public class Student implements Runnable {
     // Console message display method for Student
     private synchronized void displayMsg(String message) {
         System.out.printf("%-18s: %s\n", studentID, message);
+    }
+
+
+    // Getters
+    public Thread getStuThread() {
+        return stuThread;
+    }
+
+    public static int getDocumentCount() {
+        return documentCount;
+    }
+
+    public static int getDocMaxLength() {
+        return docMaxLength;
+    }
+
+    // Setter for the Max. Document length for the customization of the simulation
+    public static void setDocMaxLength(int docMaxLength) {
+        Student.docMaxLength = docMaxLength;
     }
 }

@@ -13,21 +13,21 @@ import java.util.Scanner;
 
 public class PrintingSystem {
 
-    public static int STUDENTS_COUNT = 4; // Count of the students
+    private static int STUDENTS_COUNT = 4; // Count of the students
 
     private static Printer laserPrinter; // Polymorphism
 
-    static Hashtable<String, ThreadGroup> printSysThreadGroups = new Hashtable<>(); // Hashtable for ThreadGroups
-    static Student[] students; // Array for Students objects
+    private static Hashtable<String, ThreadGroup> printSysThreadGroups = new Hashtable<>(); // Hashtable for ThreadGroups
+    private static Student[] students; // Array for Students objects
 
     //Initializing the technician variables
-    static PaperTechnician paperTechnician = null;
-    static TonerTechnician tonerTechnician = null;
+    private static PaperTechnician paperTechnician = null;
+    private static TonerTechnician tonerTechnician = null;
 
     public static void main(String[] args) {
 
         displayMsg("Starting Printer...");
-        laserPrinter = new LaserPrinter("LP-0001", 250, 50, 0);
+        laserPrinter = new LaserPrinter("LP-0001", 250, 0, 0);
         displayMsg(laserPrinter.toString());
         menu(); // Simulation start menu
 
@@ -109,16 +109,16 @@ public class PrintingSystem {
 
             // Overcoming a potential deadlock
             // Checking whether the resources would be sufficient for the provided settings
-            int totDocs = stuCountInt*Student.documentCount*Student.docMaxLength;
+            int totPaperCount = stuCountInt * Student.getDocumentCount() * pageCountInt;
             boolean deadLock =
-                    ((totDocs) > (paperLevelInt + ( ServicePrinter.SheetsPerPack * PaperTechnician.maxAttempts)))
-                            || ((totDocs) > (tonerLevelInt + ( ServicePrinter.Full_Toner_Level * TonerTechnician.maxAttempts)));
+                    ((totPaperCount) > (paperLevelInt + ( ServicePrinter.SheetsPerPack * PaperTechnician.getMaxAttempts())))
+                            || ((totPaperCount) > (tonerLevelInt + ( ServicePrinter.PagesPerTonerCartridge * TonerTechnician.getMaxAttempts())));
             if(deadLock) {
                 displayMsg("Entered student count with max document page count may cause the program to go into a DEADLOCK!");
                 displayMsg("Continuing with default values...");
                 return;
             }
-            Student.docMaxLength = pageCountInt;
+            Student.setDocMaxLength(pageCountInt);
             STUDENTS_COUNT = stuCountInt;
             laserPrinter = new LaserPrinter("LP-0001", paperLevelInt, tonerLevelInt, 0);
 
@@ -165,19 +165,19 @@ public class PrintingSystem {
     private static void startAllThreads() {
         System.out.println("-----------------------------------------------------------------" +
                 "------------------------------------------------------------------------------");
-        paperTechnician.paperTechThread.start();
-        tonerTechnician.tonerTechThread.start();
+        paperTechnician.getPaperTechThread().start();
+        tonerTechnician.getTonerTechThread().start();
 
         for (Student student : students) {
-            student.stuThread.start();
+            student.getStuThread().start();
         }
 
         try {
 
-            paperTechnician.paperTechThread.join();
-            tonerTechnician.tonerTechThread.join();
+            paperTechnician.getPaperTechThread().join();
+            tonerTechnician.getTonerTechThread().join();
             for (Student student : students) {
-                student.stuThread.join();
+                student.getStuThread().join();
             }
 
         } catch (InterruptedException e) {
@@ -197,5 +197,14 @@ public class PrintingSystem {
     // Console message display method for PrintingSystem main class
     private static synchronized void displayMsg(String message) {
         System.out.printf("%-18s: %s\n","MAIN_PROGRAM",message);
+    }
+
+    // Getters
+    public static int getStudentsCount() {
+        return STUDENTS_COUNT;
+    }
+
+    public static Hashtable<String, ThreadGroup> getPrintSysThreadGroups() {
+        return printSysThreadGroups;
     }
 }
